@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>녹화 웹사이트</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <button id="startRecordBtn">녹화 시작</button>
+        <button id="stopRecordBtn" disabled>녹화 종료</button>
+
+        <div>
+            <h3>유료 서비스</h3>
+            <button id="buyPremiumBtn">유료 서비스 구매</button>
+        </div>
+
+        <div>
+            <h3>비밀 갤러리</h3>
+            <button id="viewSecretGalleryBtn">비밀 갤러리 열기</button>
+        </div>
+
+        <div>
+            <h3>녹화된 동영상</h3>
+            <video id="videoPlayer" controls></video>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
