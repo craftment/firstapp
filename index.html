@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <!-- 녹화 버튼 -->
-        <button id="startRecordBtn" class="btn">녹화 시작</button>
+        <button id="startRecordBtn" class="btn-record">녹화 시작</button>
         <button id="stopRecordBtn" class="btn" disabled>녹화 종료</button>
 
         <!-- 유료 서비스 버튼 -->
@@ -23,7 +23,8 @@
             <h3>비밀 갤러리</h3>
             <button id="viewSecretGalleryBtn" class="btn">비밀 갤러리 열기</button>
             <div id="secretGallery" class="gallery">
-                <!-- 비밀 갤러리 목록이 여기에 표시됩니다 -->
+                <!-- 촬영된 동영상이 없으면 비어 있습니다 -->
+                <p id="noVideosMessage">촬영된 동영상이 없습니다.</p>
             </div>
         </div>
 
