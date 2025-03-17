@@ -1,86 +1,86 @@
-/* 전체 배경 검정색 */
-body {
-    background-color: black;
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 50px;
-}
+<head>
+  <style>
+    body {
+      background-color: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column;
+    }
 
-.container {
-    max-width: 500px;
-    margin: auto;
-}
+    #startRecording {
+      width: 150px;
+      height: 150px;
+      background-color: #ff3b30;
+      border-radius: 50%;
+      border: none;
+      font-size: 18px;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
-button {
-    border: none;
-    padding: 15px 30px;
-    margin: 10px;
-    font-size: 18px;
-    cursor: pointer;
-    border-radius: 10px;
-    transition: all 0.3s;
-}
+    #startRecording:hover {
+      background-color: #e0241c;
+    }
 
-button:disabled {
-    background-color: gray;
-    cursor: not-allowed;
-}
+    .button {
+      background-color: #34b7f1;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
-button:hover {
-    background-color: #e65c53;
-}
+    .button:hover {
+      background-color: #1e88e5;
+    }
 
-/* 녹화 시작 버튼 (빨간 원형) */
-.btn-record {
-    background-color: red;
-    color: white;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    font-size: 18px;
-    line-height: 120px;
-    margin: 20px;
-    font-weight: bold;
-}
+    #secretGallery {
+      margin-top: 20px;
+      text-align: center;
+    }
 
-/* 일반 버튼 (세련된 스타일) */
-.btn {
-    background-color: #4CAF50;
-    color: white;
-    font-weight: bold;
-    border-radius: 5px;
-    padding: 12px 20px;
-    font-size: 16px;
-}
+    #noVideosMessage {
+      display: none;
+      margin-top: 10px;
+      font-size: 18px;
+    }
 
-/* 버튼 섹션 스타일 */
-.service-section, .secret-section {
-    margin-top: 30px;
-}
+    #securityKeyPrompt {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+    }
 
-.gallery {
-    margin-top: 20px;
-    background-color: #222;
-    padding: 10px;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    min-height: 150px;
-}
+    #securityKeyInput {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: none;
+    }
 
-.video-section {
-    margin-top: 30px;
-}
+    #enterKeyButton {
+      background-color: #34b7f1;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-video {
-    width: 100%;
-    max-width: 500px;
-    margin-top: 20px;
-}
-
-#noVideosMessage {
-    color: white;
-    font-size: 18px;
-    text-align: center;
-}
+    #enterKeyButton:hover {
+      background-color: #1e88e5;
+    }
+  </style>
+</head>
