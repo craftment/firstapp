@@ -1,187 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>영상 녹화 앱</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1-crypto-js.js"></script>
-    <style>
-        body {
-            background-color: black;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-
-        #startButton {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: red;
-            color: white;
-            font-size: 20px;
-            border: none;
-            cursor: pointer;
-        }
-
-        #stopButton {
-            width: 100px;
-            height: 50px;
-            background-color: green;
-            color: white;
-            font-size: 20px;
-            border: none;
-            cursor: pointer;
-        }
-
-        #secretGalleryButton, #developerGalleryButton {
-            width: 150px;
-            height: 50px;
-            background-color: blue;
-            color: white;
-            font-size: 20px;
-            border: none;
-            margin-top: 20px;
-            cursor: pointer;
-        }
-
-        video {
-            margin-top: 20px;
-            width: 90%;
-            max-width: 600px;
-            border: 2px solid white;
-        }
-
-        #secretGallery, #developerGallery {
-            margin-top: 30px;
-        }
-    </style>
-</head>
 <body>
-    <h1>영상 녹화 앱</h1>
-    
-    <!-- 녹화 버튼 -->
-    <button id="startButton" onclick="startRecording()">녹화 시작</button>
-    <button id="stopButton" style="display:none" onclick="stopRecording()">녹화 중지</button>
+  <h1>영상 녹화 및 관리 시스템</h1>
 
-    <!-- 갤러리 버튼 -->
-    <button id="secretGalleryButton" onclick="viewSecretGallery()">비밀 갤러리</button>
-    <button id="developerGalleryButton" onclick="viewDeveloperGallery()">개발자 갤러리</button>
+  <button id="startRecording" onclick="startRecording()">녹화 시작</button>
 
-    <!-- 영상 미리보기 -->
-    <div id="secretGallery"></div>
-    <div id="developerGallery"></div>
+  <div>
+    <button class="button" id="premiumService" onclick="activatePremium()">프리미엄 서비스</button>
+    <button class="button" id="secretGalleryButton" onclick="showSecurityKeyPrompt()">비밀 갤러리</button>
+  </div>
 
-    <script>
-        let mediaRecorder;
-        let recordedBlobs = [];
-        const encryptionKey = 'secret-encryption-key'; // 안전한 키 사용 권장
+  <div id="secretGallery">
+    <h2>비밀 갤러리</h2>
+    <div id="videoGallery"></div>
+    <div id="noVideosMessage">
+      <p>촬영한 동영상이 없습니다.</p>
+    </div>
+  </div>
 
-        // 영상 암호화 함수
-        function encryptData(data) {
-            return CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(data), encryptionKey).toString();
-        }
+  <!-- 보안키 입력창 -->
+  <div id="securityKeyPrompt">
+    <h2>보안키 입력</h2>
+    <input type="password" id="securityKeyInput" placeholder="보안키를 입력하세요">
+    <button id="enterKeyButton" onclick="verifySecurityKey()">입력</button>
+  </div>
 
-        // 영상 복호화 함수
-        function decryptData(encryptedData) {
-            const bytes = CryptoJS.AES.decrypt(encryptedData, encryptionKey);
-            return bytes.toString(CryptoJS.enc.Utf8);
-        }
+  <script>
+    let user = {
+      isPremium: false,
+      isDeveloper: false,
+      videos: [],
+      securityKey: 'dev1234'  // 개발자만 접근 가능한 보안키
+    };
 
-        // 녹화 시작
-        async function startRecording() {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-            
-            mediaRecorder.ondataavailable = handleDataAvailable;
-            mediaRecorder.onstop = handleStop;
+    if (!user.isDeveloper) {
+      document.getElementById("secretGalleryButton").style.display = "none";
+    }
 
-            mediaRecorder.start();
-            document.getElementById("startButton").style.display = "none";
-            document.getElementById("stopButton").style.display = "inline";
-        }
+    function activatePremium() {
+      user.isPremium = true;
+      alert('프리미엄 서비스가 활성화되었습니다!');
+      updateUIForPremiumUser();
+    }
 
-        // 녹화 중지 후 처리
-        function handleStop() {
-            const superBuffer = new Blob(recordedBlobs, { type: 'video/webm' });
-            saveEncryptedVideo(superBuffer);  // 암호화하여 저장
-        }
+    function updateUIForPremiumUser() {
+      document.getElementById('startRecording').innerText = '무제한 녹화 시작';
+    }
 
-        // 녹화된 데이터를 저장하고 암호화
-        function saveEncryptedVideo(videoBlob) {
-            const reader = new FileReader();
-            reader.onload = function () {
-                const videoData = reader.result;
-                const encryptedData = encryptData(videoData);
-                storeEncryptedVideo(encryptedData); // 암호화된 영상 저장
-            };
-            reader.readAsArrayBuffer(videoBlob);
-        }
+    function showSecurityKeyPrompt() {
+      document.getElementById('securityKeyPrompt').style.display = 'block';
+    }
 
-        // 비밀 갤러리 보기 (사용자만 자신이 찍은 영상을 확인)
-        let encryptedVideos = [];
-        function viewSecretGallery() {
-            const gallery = document.getElementById('secretGallery');
-            gallery.innerHTML = ''; // 기존 내용 비우기
+    function verifySecurityKey() {
+      const inputKey = document.getElementById('securityKeyInput').value;
+      if (inputKey === user.securityKey) {
+        document.getElementById('securityKeyPrompt').style.display = 'none';
+        viewSecretGallery();
+      } else {
+        alert('보안키가 잘못되었습니다. 다시 시도해주세요.');
+      }
+    }
 
-            if (encryptedVideos.length === 0) {
-                gallery.innerHTML = '<p>촬영된 동영상이 없습니다.</p>';
-                return;
-            }
+    function viewSecretGallery() {
+      if (user.videos.length === 0) {
+        document.getElementById('noVideosMessage').style.display = 'block';
+      } else {
+        document.getElementById('noVideosMessage').style.display = 'none';
+        showVideos(user);
+      }
+    }
 
-            encryptedVideos.forEach((encryptedVideo, index) => {
-                // 암호화된 영상 복호화
-                const decryptedVideo = decryptData(encryptedVideo);
+    function showVideos(user) {
+      const videoGallery = document.getElementById('videoGallery');
+      user.videos.forEach(video => {
+        const videoElement = document.createElement('video');
+        videoElement.src = video.url;
+        videoGallery.appendChild(videoElement);
+      });
+    }
 
-                // 복호화된 영상을 Blob 형태로 변환 후 비디오로 표시
-                const videoBlob = new Blob([decryptedVideo], { type: 'video/webm' });
-                const videoURL = URL.createObjectURL(videoBlob);
-
-                const videoElement = document.createElement('video');
-                videoElement.src = videoURL;
-                videoElement.controls = true;
-                gallery.appendChild(videoElement);
-            });
-        }
-
-        // 개발자 갤러리 보기 (모든 사용자가 찍은 영상 암호화된 상태로 복호화하여 보기)
-        let allEncryptedVideos = []; // 모든 사용자의 암호화된 영상
-        function viewDeveloperGallery() {
-            const gallery = document.getElementById('developerGallery');
-            gallery.innerHTML = ''; // 기존 내용 비우기
-
-            if (allEncryptedVideos.length === 0) {
-                gallery.innerHTML = '<p>촬영된 동영상이 없습니다.</p>';
-                return;
-            }
-
-            allEncryptedVideos.forEach((encryptedVideo, index) => {
-                // 암호화된 영상 복호화
-                const decryptedVideo = decryptData(encryptedVideo);
-
-                // 복호화된 영상을 Blob 형태로 변환 후 비디오로 표시
-                const videoBlob = new Blob([decryptedVideo], { type: 'video/webm' });
-                const videoURL = URL.createObjectURL(videoBlob);
-
-                const videoElement = document.createElement('video');
-                videoElement.src = videoURL;
-                videoElement.controls = true;
-                gallery.appendChild(videoElement);
-            });
-        }
-
-        // 암호화된 영상을 배열에 저장
-        function storeEncryptedVideo(encryptedData) {
-            encryptedVideos.push(encryptedData); // 사용자의 영상
-            allEncryptedVideos.push(encryptedData); // 모든 사용자의 영상
-        }
-
-        // 녹화 중지
-        function stopRecording() {
-            mediaRecorder.stop();
-            document.getElementById("startButton").style.display = "inline";
-            document.getElementById("stopButton").style.display = "none";
-        }
-    </script>
+    function startRecording() {
+      alert('녹화가 시작되었습니다.');
+    }
+  </script>
 </body>
-</html>
